@@ -12,6 +12,7 @@ public class ConfidenceClassifier {
     private static final String FIRST_NAME_RULE = "FirstNameRule";
     private static final String LAST_NAME_RULE = "LastNameRule";
     private static final String ADDRESS_RULE = "AddressRule";
+    private static final String ZIP_CODE_RULE = "ZipCodeRule";
 
     public Optional<ConfidenceLevel> classify(int score, Set<String> matchedRuleNames) {
         if (matchedRuleNames.contains(EXACT_EMAIL_RULE)) {
@@ -22,9 +23,10 @@ public class ConfidenceClassifier {
         boolean firstName = matchedRuleNames.contains(FIRST_NAME_RULE);
         boolean lastName = matchedRuleNames.contains(LAST_NAME_RULE);
         boolean address = matchedRuleNames.contains(ADDRESS_RULE);
+        boolean zipCode = matchedRuleNames.contains(ZIP_CODE_RULE);
         boolean fullName = firstName && lastName;
 
-        if (emailUsername && (address || lastName)) {
+        if (emailUsername && address) {
             return Optional.of(ConfidenceLevel.HIGH);
         }
 
@@ -33,6 +35,10 @@ public class ConfidenceClassifier {
         }
 
         if (address && fullName) {
+            return Optional.of(ConfidenceLevel.HIGH);
+        }
+
+        if (emailUsername && fullName && zipCode) {
             return Optional.of(ConfidenceLevel.HIGH);
         }
 
