@@ -18,8 +18,8 @@ class ConfidenceClassifierTest {
     }
 
     @Test
-    void shouldReturnHighForEmailUsernameAndLastName() {
-        assertEquals(Optional.of(ConfidenceLevel.HIGH), classifier.classify(85, Set.of("EmailUsernameRule", "LastNameRule")));
+    void shouldReturnMediumForEmailUsernameAndLastName() {
+        assertEquals(Optional.of(ConfidenceLevel.MEDIUM), classifier.classify(85, Set.of("EmailUsernameRule", "LastNameRule")));
     }
 
     @Test
@@ -40,6 +40,14 @@ class ConfidenceClassifierTest {
     @Test
     void shouldReturnHighForFullNameAndAddress() {
         assertEquals(Optional.of(ConfidenceLevel.HIGH), classifier.classify(90, Set.of("FirstNameRule", "LastNameRule", "AddressRule")));
+    }
+
+    @Test
+    void shouldReturnHighForEmailUsernameAndFullNameAndZipCode() {
+        assertEquals(
+                Optional.of(ConfidenceLevel.HIGH),
+                classifier.classify(100, Set.of("EmailUsernameRule", "FirstNameRule", "LastNameRule", "ZipCodeRule"))
+        );
     }
 
     @Test
@@ -65,6 +73,14 @@ class ConfidenceClassifierTest {
     @Test
     void shouldReturnMediumForFullNameAndZipCode() {
         assertEquals(Optional.of(ConfidenceLevel.MEDIUM), classifier.classify(60, Set.of("FirstNameRule", "LastNameRule", "ZipCodeRule")));
+    }
+
+    @Test
+    void shouldReturnMediumForEmailUsernameAndFullNameWithoutZipCode() {
+        assertEquals(
+                Optional.of(ConfidenceLevel.MEDIUM),
+                classifier.classify(100, Set.of("EmailUsernameRule", "FirstNameRule", "LastNameRule"))
+        );
     }
 
     @Test
