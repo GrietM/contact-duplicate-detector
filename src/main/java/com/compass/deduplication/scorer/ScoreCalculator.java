@@ -12,6 +12,7 @@ public class ScoreCalculator {
                 .mapToInt(Integer::intValue)
                 .sum();
 
+        // Scores rank relative strength, so anything above 100 stops adding useful signal.
         return Math.min(totalScore, MAX_SCORE);
     }
 }

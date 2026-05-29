@@ -15,6 +15,7 @@ public class ConfidenceClassifier {
     private static final String ZIP_CODE_RULE = "ZipCodeRule";
 
     public Optional<ConfidenceLevel> classify(int score, Set<String> matchedRuleNames) {
+        // Score alone is not enough here; business guardrails decide strong combinations before thresholds apply.
         if (matchedRuleNames.contains(EXACT_EMAIL_RULE)) {
             return Optional.of(ConfidenceLevel.HIGH);
         }
