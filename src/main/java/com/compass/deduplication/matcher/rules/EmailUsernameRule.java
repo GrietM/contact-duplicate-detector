@@ -17,6 +17,7 @@ public class EmailUsernameRule implements MatchingRule {
             return 0;
         }
 
+        // Exact full-email matches belong to ExactEmailRule so the same evidence is not counted twice.
         if (sourceEmail.equals(candidateEmail)) {
             return 0;
         }

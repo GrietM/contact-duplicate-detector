@@ -54,6 +54,7 @@ public class CsvMatchWriter {
     }
 
     private List<MatchResult> sortByScoreDescending(List<MatchResult> matchResults) {
+        // Sorting is an output concern; ContactMatcher preserves discovery order internally.
         return matchResults.stream()
                 .sorted(Comparator.comparingInt(MatchResult::score).reversed())
                 .toList();

@@ -11,6 +11,7 @@ import com.compass.deduplication.matcher.rules.LastNameRule;
 import com.compass.deduplication.matcher.rules.MatchingRule;
 import com.compass.deduplication.matcher.rules.ZipCodeRule;
 import com.compass.deduplication.model.Contact;
+import com.compass.deduplication.model.ConfidenceLevel;
 import com.compass.deduplication.model.MatchResult;
 import com.compass.deduplication.normalizer.StringNormalizer;
 import com.compass.deduplication.parser.CsvContactParser;
@@ -19,7 +20,9 @@ import com.compass.deduplication.writer.CsvMatchWriter;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -42,13 +45,33 @@ public class Main {
             List<Contact> contacts = csvContactParser.parse(inputPath);
             List<MatchResult> matchResults = contactMatcher.findMatches(contacts);
             csvMatchWriter.write(outputPath, matchResults);
+            Map<ConfidenceLevel, Integer> confidenceSummary = summarizeByConfidence(matchResults);
 
             System.out.println("Loaded contacts: " + contacts.size());
+            System.out.println();
             System.out.println("Matches written: " + matchResults.size());
+            System.out.println("  HIGH:   " + confidenceSummary.get(ConfidenceLevel.HIGH));
+            System.out.println("  MEDIUM: " + confidenceSummary.get(ConfidenceLevel.MEDIUM));
+            System.out.println("  LOW:    " + confidenceSummary.get(ConfidenceLevel.LOW));
+            System.out.println();
             System.out.println("Output file: " + outputPath);
         } catch (IOException | IllegalArgumentException exception) {
             System.err.println("Error: " + exception.getMessage());
         }
+    }
+
+    private static Map<ConfidenceLevel, Integer> summarizeByConfidence(List<MatchResult> matchResults) {
+        Map<ConfidenceLevel, Integer> summary = new EnumMap<>(ConfidenceLevel.class);
+        summary.put(ConfidenceLevel.HIGH, 0);
+        summary.put(ConfidenceLevel.MEDIUM, 0);
+        summary.put(ConfidenceLevel.LOW, 0);
+
+        for (MatchResult matchResult : matchResults) {
+            ConfidenceLevel confidenceLevel = matchResult.confidenceLevel();
+            summary.put(confidenceLevel, summary.get(confidenceLevel) + 1);
+        }
+
+        return summary;
     }
 
     private static ContactMatcher buildContactMatcher() {

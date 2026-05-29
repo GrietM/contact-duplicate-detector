@@ -35,6 +35,7 @@ public class ContactMatcher {
         List<MatchResult> matches = new ArrayList<>();
 
         for (int i = 0; i < contacts.size(); i++) {
+            // Start at i + 1 so we never compare a contact with itself and never emit both A-B and B-A.
             for (int j = i + 1; j < contacts.size(); j++) {
                 Optional<MatchResult> matchResult = comparePair(contacts.get(i), contacts.get(j));
                 matchResult.ifPresent(matches::add);
